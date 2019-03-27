@@ -5,7 +5,8 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.8
 
-import { Browser, Page, BrowserContext } from 'puppeteer';
+import { Browser, Page, BrowserContext, ConnectOptions, LaunchOptions } from 'puppeteer';
+import NodeEnvironment from 'jest-environment-node'
 
 interface JestPuppeteer {
     /**
@@ -33,6 +34,31 @@ interface JestPuppeteer {
     debug(): Promise<void>;
 }
 
+declare interface JestPuppeteerConfig {
+    launch: LaunchOptions;
+    connect: ConnectOptions;
+    browserContext: string;
+    exitOnPageError: boolean;
+    server: {
+        command: string;
+        debug: boolean;
+        launchTimeout: number;
+        host: string;
+        protocol: string;
+        port: number;
+        usedPortAction: string;
+    }
+}
+
+declare class PuppeteerEnvironment extends NodeEnvironment {
+    setTimeout(timeout: number): void;
+    setup(): Promise<void>;
+    teardown(): Promise<void>;
+}
+
+declare function setup(jestConfig?: JestPuppeteerConfig): Promise<void>;
+declare function teardown(jestConfig?: JestPuppeteerConfig): Promise<void>;
+
 declare global {
     const browser: Browser;
     const context: BrowserContext;
@@ -40,4 +66,5 @@ declare global {
     const jestPuppeteer: JestPuppeteer;
 }
 
-export {};
+export default PuppeteerEnvironment;
+export {setup, teardown};
